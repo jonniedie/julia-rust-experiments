@@ -1,15 +1,21 @@
 struct Option{T}
-    is_valid::Int32 # Int32 for memory compatibility with Rust
+    is_valid::Bool # Int for memory compatibility with Rust
     value::T
     function Option{T}() where {T}
-        return new{T}(0) # Leave value undef
+        return new{T}(false) # Leave value undef
     end
-    function Option{T}(value::T) where {T}
-        return new{T}(1, value)
+    function Option(value::T) where {T}
+        return new{T}(true, value)
     end
 end
 
-is_valid(option::Option) = getfield(option, :is_valid) == 1
+const OptionSome = Option
+const OptionNone = Option
+
+some(thing) = Option(thing)
+none_of_type(T::Type) = Option{T}()
+
+is_valid(option::Option) = getfield(option, :is_valid)
 
 function Base.getproperty(option::Option, sym::Symbol)
     error(
